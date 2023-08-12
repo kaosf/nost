@@ -5,7 +5,7 @@ const relays = [
   "wss://nostr-relay.nokotaro.com",
   // "wss://nostr.fmt.wiz.biz",
   // "wss://nostr.h3z.jp",
-  // "wss://nostr.holybea.com",
+  "wss://nostr.holybea.com",
   "wss://nostr.orangepill.dev",
   // "wss://nostr.wine",
   "wss://nrelay.c-stellar.net",
