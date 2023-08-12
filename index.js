@@ -17,6 +17,7 @@ const relays = [
   "wss://relay.snort.social",
   "wss://yabu.me",
   "wss://nostr.fediverse.jp",
+  "wss://nostr.kaosfield.net",
 ];
 
 import { getEventHash, getSignature, nip19, SimplePool } from "nostr-tools";
