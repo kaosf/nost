@@ -26,6 +26,10 @@ const pubkey = "a6f1f450080b65ba75da8ac7328f91c94f8314b2cc4aa719c516852a29388f0b
 const privkey = nip19.decode(readFileSync("./nsec.txt", "utf-8").trim()).data;
 
 const content = readFileSync("content.txt", "utf-8").trim();
+if (content.match(/^\s*$/)) {
+  console.log("Empty!!");
+  process.exit(0);
+}
 
 const pool = new SimplePool();
 
