@@ -4,7 +4,7 @@ while :; do
     echo 'Empty!'
     continue
   fi
-  if [ -f content-before.txt ] && diff -q content.txt content-before.txt; then
+  if [ -f content-before.txt ] && diff content.txt content-before.txt > /dev/null; then
     echo 'Same!'
     continue
   fi
