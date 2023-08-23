@@ -1,3 +1,6 @@
-/nsec.txt
+/.content-before.txt
+/.content-current.txt
 /content.txt
-/content-before.txt
+/relays.txt
+/npub.txt
+/nsec.txt

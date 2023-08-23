@@ -12,6 +12,16 @@ npm i
 nvim nsec.txt # Input nsec1...
 chmod 600 nsec.txt
 
+nvim relays.txt # Input relay URLs
+# Example
+<<EOF
+wss://nostr.example.com
+wss://another-relay.example.com
+# wss://invalid-relay.example.com
+# The line starting with # is ignored.
+wss://third-relay.example.com
+EOF
+
 touch content.txt
 bash run.sh
 # Keep it running.
