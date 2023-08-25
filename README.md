@@ -34,6 +34,4 @@ Edit and `:w` to publish an event of kind 1.
 
 ## Want to do
 
-- Fix hard coded public key
 - Fix an error after `pool.publish(relays, ev);`
-- Enable to costomize `relays`
