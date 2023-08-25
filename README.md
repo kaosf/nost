@@ -32,6 +32,22 @@ nvim content.txt
 
 Edit and `:w` to publish an event of kind 1.
 
+## My Vim script example
+
+```vim
+function! s:nost()
+  if @% != "content.txt"
+    return
+  endif
+  w
+  sleep 1
+  goto 1
+  d 9999
+  redraw
+endfunction
+nnoremap <silent> sn :call <SID>nost()<CR>
+```
+
 ## Want to do
 
 - Fix an error after `pool.publish(relays, ev);`
