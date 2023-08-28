@@ -9,6 +9,6 @@ while :; do
     echo 'Same!'
     continue
   fi
-  node index.js 2> /dev/null
+  node index.js
   cp .content-current.txt .content-before.txt
 done

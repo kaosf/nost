@@ -1,10 +1,12 @@
-import { getEventHash, getPublicKey, getSignature, nip19, SimplePool } from "nostr-tools";
+import { finishEvent, getPublicKey, nip19, SimplePool } from "nostr-tools";
 import "websocket-polyfill";
 import { readFileSync } from "fs";
 
 const privkey = nip19.decode(readFileSync("./nsec.txt", "utf-8").trim()).data;
-const pubkey = getPublicKey(privkey);
-const relays = readFileSync("./relays.txt", "utf-8").split("\n").filter(x => !x.match(/^#/)).filter(x => !(x === ""));
+const relays = readFileSync("./relays.txt", "utf-8")
+  .split("\n")
+  .filter((x) => !x.match(/^#/))
+  .filter((x) => !(x === ""));
 if (relays.length === 0) {
   console.log("No relay!!");
   process.exit(0);
@@ -18,14 +20,15 @@ if (content.match(/^\s*$/)) {
 
 const pool = new SimplePool();
 
-const ev = {
-  kind: 1,
-  created_at: Math.floor(Date.now() / 1000),
-  tags: [],
-  content,
-  pubkey
-};
-ev.id = getEventHash(ev);
-ev.sig = getSignature(ev, privkey);
+const ev = finishEvent(
+  {
+    kind: 1,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [],
+    content,
+  },
+  privkey
+);
 
-pool.publish(relays, ev);
+await Promise.allSettled(pool.publish(relays, ev));
+pool.close(relays);
