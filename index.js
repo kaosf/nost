@@ -30,5 +30,12 @@ const ev = finishEvent(
   privkey
 );
 
-await Promise.allSettled(pool.publish(relays, ev));
+await Promise.race([
+  Promise.allSettled(pool.publish(relays, ev)),
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 2000);
+  }),
+]);
 pool.close(relays);
