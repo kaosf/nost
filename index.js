@@ -30,12 +30,16 @@ const ev = finishEvent(
   privkey
 );
 
+console.log(Date.now(), "before allSettled");
 await Promise.race([
   Promise.allSettled(pool.publish(relays, ev)),
   new Promise((resolve) => {
     setTimeout(() => {
+      console.log("Timeout!");
       resolve();
     }, 2000);
   }),
 ]);
+console.log(Date.now(), "after race");
 pool.close(relays);
+console.log(Date.now(), "after close");

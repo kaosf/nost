@@ -9,6 +9,10 @@ while :; do
     echo 'Same!'
     continue
   fi
+  date
+  echo "Before node index.js"
   node index.js
+  date
+  echo "After node index.js"
   cp .content-current.txt .content-before.txt
 done
