@@ -5,14 +5,10 @@
 - asdf
 
 ```sh
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf install
-npm i
+nvim config/nsec.txt # Input nsec1...
+chmod 600 config/nsec.txt
 
-nvim nsec.txt # Input nsec1...
-chmod 600 nsec.txt
-
-nvim relays.txt # Input relay URLs
+nvim config/relays.txt # Input relay URLs
 # Example
 <<EOF
 wss://nostr.example.com
@@ -22,12 +18,13 @@ wss://another-relay.example.com
 wss://third-relay.example.com
 EOF
 
-touch content.txt
-bash run.sh
-# Keep it running.
+docker container run -d --restart=always \
+-v $PWD/config:/workspace/config \
+-v $PWD/data:/workspace/data \
+-u $UID \
+kaosf/nost:latest
 
-# In another terminal:
-nvim content.txt
+nvim data/content.txt
 ```
 
 Edit and `:w` to publish an event of kind 1.
@@ -36,7 +33,7 @@ Edit and `:w` to publish an event of kind 1.
 
 ```vim
 function! s:nost()
-  if @% != "content.txt"
+  if expand("%:p") != "/path/to/data/content.txt"
     return
   endif
   w
@@ -48,6 +45,15 @@ endfunction
 nnoremap <silent> sn :call <SID>nost()<CR>
 ```
 
-## Want to do
+## Development
 
-- Fix an error after `pool.publish(relays, ev);`
+```sh
+asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+asdf install
+npm i
+
+nvim config/nsec.txt
+nvim config/relays.txt
+
+bash run.sh
+```
