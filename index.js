@@ -2,7 +2,7 @@ import { finishEvent, nip19, SimplePool } from "nostr-tools";
 import "websocket-polyfill";
 import { readFileSync } from "fs";
 
-const privkey = nip19.decode(readFileSync("./nsec.txt", "utf-8").trim()).data;
+const privKey = nip19.decode(readFileSync("./nsec.txt", "utf-8").trim()).data;
 const relays = readFileSync("./relays.txt", "utf-8")
   .split(/\n|\r\n|\r/)
   .filter((x) => !x.match(/^#/))
@@ -27,7 +27,7 @@ const ev = finishEvent(
     tags: [],
     content,
   },
-  privkey
+  privKey
 );
 
 console.log(new Date(), "before allSettled");
