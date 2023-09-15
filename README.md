@@ -1,8 +1,8 @@
 # Nostr + Post = Nost
 
-- Neovim
-- inotifywait
-- asdf
+Only write and save on Neovim (or Vim). You can post an event to Nostr!
+
+## Preparation
 
 ```sh
 nvim config/nsec.txt # Input nsec1...
@@ -29,6 +29,8 @@ nvim data/content.txt
 
 Edit and `:w` to publish an event of kind 1.
 
+The container detects your `close_write` event of `data/content.txt`, and post it to Nostr.
+
 ## My Vim script example
 
 ```vim
@@ -45,7 +47,20 @@ endfunction
 nnoremap <silent> sn :call <SID>nost()<CR>
 ```
 
+## Log viewer
+
+```sh
+docker run -d ... --name nost kaosf/nost:latest
+# Run with --name option.
+
+docker logs -f nost
+```
+
 ## Development
+
+- Neovim
+- inotifywait
+- asdf
 
 ```sh
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
