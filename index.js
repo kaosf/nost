@@ -2,8 +2,10 @@ import { finishEvent, nip19, SimplePool } from "nostr-tools";
 import "websocket-polyfill";
 import { readFileSync } from "fs";
 
-const privKey = nip19.decode(readFileSync("./nsec.txt", "utf-8").trim()).data;
-const relays = readFileSync("./relays.txt", "utf-8")
+const privKey = nip19.decode(
+  readFileSync("./config/nsec.txt", "utf-8").trim()
+).data;
+const relays = readFileSync("./config/relays.txt", "utf-8")
   .split(/\n|\r\n|\r/)
   .filter((x) => !x.match(/^#/))
   .filter((x) => !(x === ""));
@@ -12,7 +14,7 @@ if (relays.length === 0) {
   process.exit(0);
 }
 
-const content = readFileSync("./.content-current.txt", "utf-8").trim();
+const content = readFileSync("./data/.content-current.txt", "utf-8").trim();
 if (content.match(/^\s*$/)) {
   console.log("Empty!!");
   process.exit(0);

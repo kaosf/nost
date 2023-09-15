@@ -1,11 +1,11 @@
 while :; do
-  inotifywait -q content.txt -e close_write
-  cp content.txt .content-current.txt
-  if [ -z "$(cat .content-current.txt)" ]; then
+  inotifywait -q data/content.txt -e close_write
+  cp data/content.txt data/.content-current.txt
+  if [ -z "$(cat data/.content-current.txt)" ]; then
     echo 'Empty!'
     continue
   fi
-  if [ -f .content-before.txt ] && diff .content-current.txt .content-before.txt > /dev/null; then
+  if [ -f data/.content-before.txt ] && diff data/.content-current.txt data/.content-before.txt > /dev/null; then
     echo 'Same!'
     continue
   fi
@@ -14,5 +14,5 @@ while :; do
   node index.js
   date
   echo "After node index.js"
-  cp .content-current.txt .content-before.txt
+  cp data/.content-current.txt data/.content-before.txt
 done

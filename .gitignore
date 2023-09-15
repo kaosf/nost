@@ -1,5 +1,5 @@
-/.content-before.txt
-/.content-current.txt
-/content.txt
-/relays.txt
-/nsec.txt
+/config/relays.txt
+/config/nsec.txt
+/data/.content-before.txt
+/data/.content-current.txt
+/data/content.txt
