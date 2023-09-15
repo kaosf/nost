@@ -1,4 +1,4 @@
-import { finishEvent, getPublicKey, nip19, SimplePool } from "nostr-tools";
+import { finishEvent, nip19, SimplePool } from "nostr-tools";
 import "websocket-polyfill";
 import { readFileSync } from "fs";
 
