@@ -19,7 +19,7 @@ wss://third-relay.example.com
 EOF
 
 docker container run -d --restart=always \
--v $PWD/config:/workspace/config \
+-v $PWD/config:/workspace/config:ro \
 -v $PWD/data:/workspace/data \
 -u $UID \
 kaosf/nost:latest
