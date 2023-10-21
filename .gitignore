@@ -3,3 +3,8 @@
 /data/.content-before.txt
 /data/.content-current.txt
 /data/content.txt
+
+
+# Added by cargo
+
+/target
