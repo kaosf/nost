@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
+file_diff = "1.0.0"
 inotify = "0.10.2"
 nostr-sdk = "0.24.0"
 tokio = "1.33.0"
