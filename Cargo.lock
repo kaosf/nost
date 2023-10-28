@@ -774,6 +774,7 @@ dependencies = [
  "clap",
  "inotify",
  "nostr-sdk",
+ "tokio",
 ]
 
 [[package]]
