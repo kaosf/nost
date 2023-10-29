@@ -12,7 +12,7 @@ struct Args {
     watch: String,
 }
 
-async fn publish(content: &str) -> Result<()> {
+async fn get_client() -> Result<Client> {
     let mut relays = Vec::new();
     for line in read_to_string("./config/relays.txt").unwrap().lines() {
         if line.starts_with("#") {
@@ -31,13 +31,10 @@ async fn publish(content: &str) -> Result<()> {
 
     client.connect().await;
 
-    println!("--content--{}--", content);
-    client.publish_text_note(content, &[]).await?;
-
-    Ok(())
+    return Ok(client);
 }
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> Result<()> {
     // let args = Args::parse();
     // println!("{}", args.watch);
@@ -87,12 +84,23 @@ async fn main() -> Result<()> {
                 println!("Same!");
                 continue;
             }
+            println!("--content--{}--", content);
 
-            publish(content).await?;
-            // TODO: 2秒でタイムアウトさせたい
+            let client = get_client().await?;
+
+            if let Err(_) = tokio::time::timeout(std::time::Duration::from_secs(2), async {
+                if let Err(_) = client.publish_text_note(content, &[]).await {
+                    println!("client.publish_text_note Error");
+                }
+            })
+            .await
+            {
+                println!("Timeout!");
+            }
+            println!("After publish");
 
             copy("./data/.content-current.txt", "./data/.content-before.txt")?;
-            println!("After copy cur -> bef")
+            println!("After copy cur -> bef");
         }
     }
 }
