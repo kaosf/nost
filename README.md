@@ -18,6 +18,10 @@ wss://another-relay.example.com
 wss://third-relay.example.com
 EOF
 
+# Version 2 style
+cargo run
+
+# or version 1 with Docker
 docker container run -d --restart=always \
 -v $PWD/config:/workspace/config:ro \
 -v $PWD/data:/workspace/data \
@@ -50,6 +54,7 @@ nnoremap <silent> sn :call <SID>nost()<CR>
 ## Log viewer
 
 ```sh
+# Version 1 style
 docker run -d ... --name nost kaosf/nost:latest
 # Run with --name option.
 
@@ -58,17 +63,8 @@ docker logs -f nost
 
 ## Development
 
-- Neovim
-- inotifywait
-- asdf
+Install Rust https://rustup.rs/
 
 ```sh
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf install
-npm i
-
-nvim config/nsec.txt
-nvim config/relays.txt
-
-bash run.sh
+cargo build
 ```
