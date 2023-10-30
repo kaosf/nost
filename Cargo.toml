@@ -9,5 +9,6 @@ edition = "2021"
 clap = { version = "4.4.6", features = ["derive"] }
 file_diff = "1.0.0"
 inotify = "0.10.2"
+log = "0.4.20"
 nostr-sdk = "0.24.0"
 tokio = "1.33.0"

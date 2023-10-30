@@ -780,6 +780,7 @@ dependencies = [
  "clap",
  "file_diff",
  "inotify",
+ "log",
  "nostr-sdk",
  "tokio",
 ]
