@@ -18,10 +18,6 @@ wss://another-relay.example.com
 wss://third-relay.example.com
 EOF
 
-# Version 2 style
-cargo run
-
-# or version 1 with Docker
 docker container run -d --restart=always \
 -v $PWD/config:/workspace/config:ro \
 -v $PWD/data:/workspace/data \
@@ -33,7 +29,7 @@ nvim data/content.txt
 
 Edit and `:w` to publish an event of kind 1.
 
-The container detects your `close_write` event of `data/content.txt`, and post it to Nostr.
+The container detects your `WatchMask::MODIFY` event of `data/content.txt`, and post it to Nostr.
 
 ## My Vim script example
 
