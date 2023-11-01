@@ -1,7 +1,7 @@
 use clap::Parser;
+use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
-use log;
 use nostr_sdk::prelude::*;
 use std::fs::{copy, read_to_string};
 
@@ -37,6 +37,8 @@ async fn get_client() -> Result<Client> {
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> Result<()> {
+    env_logger::init();
+
     // let args = Args::parse();
     // println!("{}", args.watch);
 
