@@ -87,7 +87,7 @@ async fn main() -> Result<()> {
                 log::info!("Same!");
                 continue;
             }
-            log::debug!("--content begin--\n{}\n--content end--", content);
+            log::info!("--content begin--\n{}\n--content end--", content);
 
             let client = get_client().await?;
 
@@ -98,7 +98,7 @@ async fn main() -> Result<()> {
             })
             .await
             {
-                log::info!("Timeout!")
+                log::debug!("Timeout!")
             }
             log::debug!("After publish");
 
