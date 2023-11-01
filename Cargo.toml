@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
+env_logger = "0.10.0"
 file_diff = "1.0.0"
 inotify = "0.10.2"
 log = "0.4.20"
