@@ -87,7 +87,7 @@ async fn main() -> Result<()> {
                 log::info!("Same!");
                 continue;
             }
-            log::info!("--content--{}--", content);
+            log::debug!("--content begin--\n{}\n--content end--", content);
 
             let client = get_client().await?;
 
@@ -100,10 +100,10 @@ async fn main() -> Result<()> {
             {
                 log::info!("Timeout!")
             }
-            log::info!("After publish");
+            log::debug!("After publish");
 
             copy("./data/.content-current.txt", "./data/.content-before.txt")?;
-            log::info!("After copy cur -> bef");
+            log::debug!("After copy cur -> bef");
         }
     }
 }
