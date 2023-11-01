@@ -22,6 +22,7 @@ docker container run -d --restart=always \
 -v $PWD/config:/workspace/config:ro \
 -v $PWD/data:/workspace/data \
 -u $UID \
+-e RUST_LOG=info \
 kaosf/nost:latest
 
 nvim data/content.txt
