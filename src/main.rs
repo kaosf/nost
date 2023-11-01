@@ -1,6 +1,7 @@
 use clap::Parser;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
+use log;
 use nostr_sdk::prelude::*;
 use std::fs::{copy, read_to_string};
 
@@ -77,30 +78,30 @@ async fn main() -> Result<()> {
             let binding = read_to_string("./data/.content-current.txt").unwrap();
             let content = binding.as_str().trim();
             if content == "" {
-                println!("Empty!");
+                log::info!("Empty!");
                 continue;
             }
             if diff("./data/.content-before.txt", "./data/.content-current.txt") {
-                println!("Same!");
+                log::info!("Same!");
                 continue;
             }
-            println!("--content--{}--", content);
+            log::info!("--content--{}--", content);
 
             let client = get_client().await?;
 
             if let Err(_) = tokio::time::timeout(std::time::Duration::from_secs(2), async {
                 if let Err(_) = client.publish_text_note(content, &[]).await {
-                    println!("client.publish_text_note Error");
+                    log::error!("client.publish_text_note Error");
                 }
             })
             .await
             {
-                println!("Timeout!");
+                log::info!("Timeout!")
             }
-            println!("After publish");
+            log::info!("After publish");
 
             copy("./data/.content-current.txt", "./data/.content-before.txt")?;
-            println!("After copy cur -> bef");
+            log::info!("After copy cur -> bef");
         }
     }
 }
