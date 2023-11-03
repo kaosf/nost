@@ -13,7 +13,12 @@ struct Args {
     watch: String,
 }
 
-async fn get_client() -> Result<Client> {
+fn get_keys() -> nostr::Keys {
+    return Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim())
+        .unwrap();
+}
+
+async fn get_client(keys: nostr::Keys) -> Result<Client> {
     let mut relays = Vec::new();
     for line in read_to_string("./config/relays.txt").unwrap().lines() {
         if line.starts_with("#") {
@@ -21,8 +26,6 @@ async fn get_client() -> Result<Client> {
         }
         relays.push(line.to_string());
     }
-    let keys =
-        Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim()).unwrap();
 
     let client = Client::new(&keys);
 
@@ -89,10 +92,14 @@ async fn main() -> Result<()> {
             }
             log::info!("--content begin--\n{}\n--content end--", content);
 
-            let client = get_client().await?;
+            let keys = get_keys();
+            let client = get_client(keys).await?;
+
+            let event: Event = EventBuilder::new_text_note(content, &[]).to_event(&keys)?;
+            log::info!("Event id: {}", event.id);
 
             if let Err(_) = tokio::time::timeout(std::time::Duration::from_secs(2), async {
-                if let Err(_) = client.publish_text_note(content, &[]).await {
+                if let Err(_) = client.send_event(event).await {
                     log::error!("client.publish_text_note Error");
                 }
             })
