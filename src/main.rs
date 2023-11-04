@@ -2,13 +2,7 @@ use clap::Parser;
 use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
-use nostr_sdk::{
-    nostr::{
-        key::{FromSkStr, Keys},
-        Event, EventBuilder,
-    },
-    Client, Result,
-};
+use nostr_sdk::prelude::*;
 use std::fs::{copy, read_to_string};
 
 /// Nostr + Post = Nost
