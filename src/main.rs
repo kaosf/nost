@@ -2,7 +2,13 @@ use clap::Parser;
 use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
-use nostr_sdk::nostr::key::FromSkStr;
+use nostr_sdk::{
+    nostr::{
+        key::{FromSkStr, Keys},
+        Event, EventBuilder,
+    },
+    Client, Result,
+};
 use std::fs::{copy, read_to_string};
 
 /// Nostr + Post = Nost
@@ -13,14 +19,12 @@ struct Args {
     watch: String,
 }
 
-fn get_keys() -> nostr_sdk::nostr::key::Keys {
-    return nostr_sdk::nostr::key::Keys::from_sk_str(
-        read_to_string("./config/nsec.txt").unwrap().as_str().trim(),
-    )
-    .unwrap();
+fn get_keys() -> Keys {
+    return Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim())
+        .unwrap();
 }
 
-async fn get_client(keys: nostr_sdk::nostr::key::Keys) -> nostr_sdk::Result<nostr_sdk::Client> {
+async fn get_client(keys: Keys) -> Result<Client> {
     let mut relays = Vec::new();
     for line in read_to_string("./config/relays.txt").unwrap().lines() {
         if line.starts_with("#") {
@@ -29,7 +33,7 @@ async fn get_client(keys: nostr_sdk::nostr::key::Keys) -> nostr_sdk::Result<nost
         relays.push(line.to_string());
     }
 
-    let client = nostr_sdk::Client::new(&keys);
+    let client = Client::new(&keys);
 
     for relay in relays {
         client.add_relay(relay, None).await?;
@@ -41,7 +45,7 @@ async fn get_client(keys: nostr_sdk::nostr::key::Keys) -> nostr_sdk::Result<nost
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
-async fn main() -> nostr_sdk::Result<()> {
+async fn main() -> Result<()> {
     env_logger::init();
 
     // let args = Args::parse();
@@ -97,8 +101,7 @@ async fn main() -> nostr_sdk::Result<()> {
             let keys = get_keys();
             let client = get_client(keys).await?;
 
-            let event: nostr_sdk::nostr::Event =
-                nostr_sdk::nostr::EventBuilder::new_text_note(content, &[]).to_event(&keys)?;
+            let event: Event = EventBuilder::new_text_note(content, &[]).to_event(&keys)?;
             log::info!("Event id: {}", event.id);
 
             if let Err(_) = tokio::time::timeout(std::time::Duration::from_secs(2), async {
