@@ -48,6 +48,22 @@ endfunction
 nnoremap <silent> sn :call <SID>nost()<CR>
 ```
 
+Lua version:
+
+```lua
+local function nost()
+	if vim.fn.expand("%:p") ~= "/path/to/data/content.txt" then
+		return
+	end
+	vim.cmd("w")
+	vim.cmd("sleep 1")
+	vim.cmd("goto 1")
+	vim.cmd("d 9999")
+	vim.cmd("redraw")
+end
+vim.keymap.set("n", "sn", nost, { silent = true })
+```
+
 ## Log viewer
 
 ```sh
