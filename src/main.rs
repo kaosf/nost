@@ -14,8 +14,7 @@ struct Args {
 }
 
 fn get_keys() -> Keys {
-    return Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim())
-        .unwrap();
+    Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim()).unwrap()
 }
 
 async fn get_client(keys: Keys) -> Result<Client> {
