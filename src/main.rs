@@ -58,6 +58,8 @@ async fn main() -> Result<()> {
         .expect("Failed to add inotify watch");
 
     let mut buffer = [0u8; 4096];
+    let keys = get_keys();
+    let client = get_client(keys).await?;
     loop {
         let events = inotify
             .read_events_blocking(&mut buffer)
@@ -90,9 +92,6 @@ async fn main() -> Result<()> {
                 continue;
             }
             log::info!("--content begin--\n{}\n--content end--", content);
-
-            let keys = get_keys();
-            let client = get_client(keys).await?;
 
             let event: Event = EventBuilder::new_text_note(content, &[]).to_event(&keys)?;
             log::info!("Event id: {}", event.id);
