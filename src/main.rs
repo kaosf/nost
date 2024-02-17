@@ -3,6 +3,7 @@ use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
 use nostr_sdk::prelude::*;
+use std::collections::HashSet;
 use std::fs::{copy, read_to_string};
 
 /// Nostr + Post = Nost
@@ -17,7 +18,7 @@ fn get_keys() -> Keys {
     Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim()).unwrap()
 }
 
-async fn get_client(keys: Keys) -> Result<Client> {
+fn get_relays() -> Vec<String> {
     let mut relays = Vec::new();
     for line in read_to_string("./config/relays.txt").unwrap().lines() {
         if line.starts_with("#") {
@@ -25,6 +26,44 @@ async fn get_client(keys: Keys) -> Result<Client> {
         }
         relays.push(line.to_string());
     }
+    relays
+}
+
+fn relays_to_add(relays: Vec<String>, new_relays: Vec<String>) -> Vec<String> {
+    // let mut new_relays_set: HashSet<String> = new_relays.into_iter().collect();
+    // let mut relays_set: HashSet<String> = relays.into_iter().collect();
+    // let mut result: Vec<String> = Vec::new();
+    // for relay in new_relays_set.difference(&relays_set).into_iter() {
+    //     result.push(relay.to_string());
+    // }
+
+    let mut result: Vec<String> = Vec::new();
+    for relay in new_relays
+        .into_iter()
+        .collect::<HashSet<String>>()
+        .difference(&relays.into_iter().collect())
+        .into_iter()
+    {
+        result.push(relay.to_string());
+    }
+    result
+}
+
+fn relays_to_remove(relays: Vec<String>, new_relays: Vec<String>) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    for relay in relays
+        .into_iter()
+        .collect::<HashSet<String>>()
+        .difference(&new_relays.into_iter().collect())
+        .into_iter()
+    {
+        result.push(relay.to_string());
+    }
+    result
+}
+
+async fn get_client(keys: Keys) -> Result<Client> {
+    let relays = get_relays();
 
     let client = Client::new(&keys);
 
