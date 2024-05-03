@@ -1,17 +1,8 @@
-use clap::Parser;
 use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
 use nostr_sdk::prelude::*;
 use std::fs::{copy, read_to_string};
-
-/// Nostr + Post = Nost
-#[derive(Parser, Debug)]
-struct Args {
-    /// Directory to watch
-    #[arg(short, long, default_value_t = String::from("./data/"))]
-    watch: String,
-}
 
 fn get_keys() -> Keys {
     Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim()).unwrap()
@@ -40,9 +31,6 @@ async fn get_client(keys: Keys) -> Result<Client> {
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> Result<()> {
     env_logger::init();
-
-    // let args = Args::parse();
-    // println!("{}", args.watch);
 
     let mut inotify = Inotify::init().expect("Failed to initialize inotify");
 
