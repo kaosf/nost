@@ -42,7 +42,7 @@ async fn main() -> Result<()> {
     env_logger::init();
 
     let args = Args::parse();
-    println!("{}", args.watch);
+    log::info!("Watch directory: {}", args.watch);
 
     let mut inotify = Inotify::init().expect("Failed to initialize inotify");
 
@@ -92,13 +92,13 @@ async fn main() -> Result<()> {
             log::info!("Event id: {}", event.id);
 
             if let Err(_) = tokio::time::timeout(std::time::Duration::from_secs(2), async {
-                if let Err(_) = client.send_event(event).await {
-                    log::error!("client.publish_text_note Error");
+                if let Err(nostr_error) = client.send_event(event).await {
+                    log::error!("client.send_event Error!\n{}", nostr_error);
                 }
             })
             .await
             {
-                log::debug!("Timeout!")
+                log::debug!("Timeout!");
             }
             log::debug!("After publish");
 
