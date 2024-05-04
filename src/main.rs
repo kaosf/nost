@@ -61,8 +61,9 @@ async fn main() -> Result<()> {
                 if event_name != "content.txt" {
                     continue;
                 }
+            } else {
+                continue;
             }
-
             if !event.mask.contains(EventMask::MODIFY) {
                 continue;
             }
