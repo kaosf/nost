@@ -48,7 +48,7 @@ async fn main() -> Result<()> {
 
     inotify
         .watches()
-        .add(args.watch, WatchMask::MODIFY)
+        .add(args.watch, WatchMask::CLOSE_WRITE)
         .expect("Failed to add inotify watch");
 
     let mut buffer = [0u8; 4096];
@@ -70,7 +70,7 @@ async fn main() -> Result<()> {
             } else {
                 continue;
             }
-            if !event.mask.contains(EventMask::MODIFY) {
+            if !event.mask.contains(EventMask::CLOSE_WRITE) {
                 continue;
             }
 
