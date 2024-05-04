@@ -41,20 +41,14 @@ async fn get_client(keys: Keys) -> Result<Client> {
 async fn main() -> Result<()> {
     env_logger::init();
 
-    // let args = Args::parse();
-    // println!("{}", args.watch);
+    let args = Args::parse();
+    println!("{}", args.watch);
 
     let mut inotify = Inotify::init().expect("Failed to initialize inotify");
 
     inotify
         .watches()
-        .add(
-            // "./data/content.txt", // ディレクトリ見ないとダメ
-            "./data/",
-            // args.watch,
-            // WatchMask::DELETE | WatchMask::CREATE | WatchMask::MODIFY,
-            WatchMask::MODIFY,
-        )
+        .add(args.watch, WatchMask::MODIFY)
         .expect("Failed to add inotify watch");
 
     let mut buffer = [0u8; 4096];
