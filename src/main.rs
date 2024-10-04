@@ -3,23 +3,38 @@ use env_logger;
 use file_diff::diff;
 use inotify::{EventMask, Inotify, WatchMask};
 use nostr_sdk::prelude::*;
-use std::fs::{copy, read_to_string};
+use std::{
+    fs::{copy, read_to_string},
+    path::PathBuf,
+};
 
 /// Nostr + Post = Nost
 #[derive(Parser, Debug)]
 struct Args {
+    /// Directory for config
+    #[arg(short, long, default_value_t = String::from("./config/"))]
+    config: String,
     /// Directory to watch
     #[arg(short, long, default_value_t = String::from("./data/"))]
     watch: String,
 }
 
-fn get_keys() -> Keys {
-    Keys::from_sk_str(read_to_string("./config/nsec.txt").unwrap().as_str().trim()).unwrap()
+fn get_keys(config_dir: &PathBuf) -> Keys {
+    Keys::from_sk_str(
+        read_to_string(config_dir.join("nsec.txt"))
+            .unwrap()
+            .as_str()
+            .trim(),
+    )
+    .unwrap()
 }
 
-async fn get_client(keys: Keys) -> Result<Client> {
+async fn get_client(config_dir: &PathBuf, keys: Keys) -> Result<Client> {
     let mut relays = Vec::new();
-    for line in read_to_string("./config/relays.txt").unwrap().lines() {
+    for line in read_to_string(config_dir.join("relays.txt"))
+        .unwrap()
+        .lines()
+    {
         if line.starts_with("#") {
             continue;
         }
@@ -42,18 +57,26 @@ async fn main() -> Result<()> {
     env_logger::init();
 
     let args = Args::parse();
-    log::info!("Watch directory: {}", args.watch);
+    let config_dir = PathBuf::from(args.config);
+    log::info!("Config directory: {}", config_dir.display());
+    let data_dir = PathBuf::from(args.watch);
+    log::info!("Watch directory: {}", data_dir.display());
 
     let mut inotify = Inotify::init().expect("Failed to initialize inotify");
 
     inotify
         .watches()
-        .add(args.watch, WatchMask::CLOSE_WRITE)
+        .add(&data_dir, WatchMask::CLOSE_WRITE)
         .expect("Failed to add inotify watch");
 
     let mut buffer = [0u8; 4096];
-    let keys = get_keys();
-    let client = get_client(keys).await?;
+    let keys = get_keys(&config_dir);
+    let client = get_client(&config_dir, keys).await?;
+    let data_dir_content = data_dir.join("content.txt");
+    let data_dir_hidden_content_current = data_dir.join(".content-current.txt");
+    let data_dir_hidden_content_before = data_dir.join(".content-before.txt");
+    let data_dir_hidden_content_before_str = data_dir_hidden_content_before.to_str().unwrap();
+    let data_dir_hidden_content_current_str = data_dir_hidden_content_current.to_str().unwrap();
     loop {
         let events = inotify
             .read_events_blocking(&mut buffer)
@@ -74,15 +97,18 @@ async fn main() -> Result<()> {
                 continue;
             }
 
-            copy("./data/content.txt", "./data/.content-current.txt")?;
+            copy(&data_dir_content, &data_dir_hidden_content_current)?;
 
-            let binding = read_to_string("./data/.content-current.txt").unwrap();
+            let binding = read_to_string(&data_dir_hidden_content_current).unwrap();
             let content = binding.as_str().trim();
             if content == "" {
                 log::info!("Empty!");
                 continue;
             }
-            if diff("./data/.content-before.txt", "./data/.content-current.txt") {
+            if diff(
+                data_dir_hidden_content_before_str,
+                data_dir_hidden_content_current_str,
+            ) {
                 log::info!("Same!");
                 continue;
             }
@@ -102,7 +128,10 @@ async fn main() -> Result<()> {
             }
             log::debug!("After publish");
 
-            copy("./data/.content-current.txt", "./data/.content-before.txt")?;
+            copy(
+                &data_dir_hidden_content_current,
+                &data_dir_hidden_content_before,
+            )?;
             log::debug!("After copy cur -> bef");
         }
     }
